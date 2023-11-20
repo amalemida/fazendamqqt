@@ -2,7 +2,7 @@ import json
 import time
 import paho.mqtt.client as mqtt
 import requests
-import datetime
+from datetime import datetime
 
 id = '91c4a0a0-0e35-40cb-a603-3b42611f15dd'  # gerado no guidgen
 client_telemetry_topic_sensor1 = id + '/telemetry/sensor1'
@@ -22,9 +22,12 @@ def handle_telemetry(client, userdata, message):
     global tmax1, tmin1, tmax2, tmin2
 
     endpoint_url = 'http://localhost:5088/api/temperatura'
-    current_datetime = datetime.datetime.now()
-    current_date = current_datetime.strftime("%d-%m-%Y")
-    current_time = current_datetime.strftime("%H:%M:%S")
+    current_datetime = datetime.now()
+    current_date_str = current_datetime.strftime("%d-%m-%Y")
+    current_time_str = current_datetime.strftime("%H:%M:%S")
+    current_time = datetime.strptime(current_time_str, "%H:%M:%S").time()
+    start_time = datetime.strptime("08:00:00", "%H:%M:%S").time()
+    end_time = datetime.strptime("17:05:00", "%H:%M:%S").time()
     payload = json.loads(message.payload.decode())
 
     if 'temperature_sensor1' in payload:
@@ -40,19 +43,23 @@ def handle_telemetry(client, userdata, message):
             "sensorId": 1,
             "tmax": tmax1,
             "tmin": tmin1,
-            "data": current_date,
-            "hora": current_time
+            "data": current_date_str,
+            "hora": current_time_str
         }
         print('Sending command for sensor 1:', command_sensor1)
         
         command_json_sensor1 = json.dumps(command_sensor1)
-        response_sensor1 = requests.post(endpoint_url, data=command_json_sensor1, headers={'Content-Type': 'application/json'})
+
+        if start_time <= current_time <= end_time:
+            response_sensor1 = requests.post(endpoint_url, data=command_json_sensor1, headers={'Content-Type': 'application/json'})
         
-        if response_sensor1.status_code == 200:
-            print("Command for sensor 1 successfully sent!")
+            if response_sensor1.status_code == 201:
+                print("Command for sensor 1 successfully sent!")
+            else:
+                print("Error sending command for sensor 1:", response_sensor1.status_code)
+                print("Response content:", response_sensor1.content)
         else:
-            print("Error sending command for sensor 1:", response_sensor1.status_code)
-            print("Response content:", response_sensor1.content)
+            print("Waiting for telemetry transmission window.")
 
     if 'temperature_sensor2' in payload:
         temperature_sensor2 = payload['temperature_sensor2']
@@ -66,19 +73,23 @@ def handle_telemetry(client, userdata, message):
             "sensorId": 2,
             "tmax": tmax2,
             "tmin": tmin2,
-            "data": current_date,
-            "hora": current_time
+            "data": current_date_str,
+            "hora": current_time_str
         }
         print('Sending command for sensor 2:', command_sensor2)
         
         command_json_sensor2 = json.dumps(command_sensor2)
-        response_sensor2 = requests.post(endpoint_url, data=command_json_sensor2, headers={'Content-Type': 'application/json'})
         
-        if response_sensor2.status_code == 201:
-            print("Command for sensor 2 successfully sent!")
+        if start_time <= current_time <= end_time:
+            response_sensor2 = requests.post(endpoint_url, data=command_json_sensor2, headers={'Content-Type': 'application/json'})
+            
+            if response_sensor2.status_code == 201:
+                print("Command for sensor 2 successfully sent!")
+            else:
+                print("Error sending command for sensor 2:", response_sensor2.status_code)
+                print("Response content:", response_sensor2.content)
         else:
-            print("Error sending command for sensor 2:", response_sensor2.status_code)
-            print("Response content:", response_sensor2.content)
+            print("Waiting for telemetry transmission window.")
 
 while True:
     mqtt_client.subscribe(client_telemetry_topic_sensor1)
