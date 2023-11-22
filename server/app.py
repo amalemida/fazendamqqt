@@ -33,12 +33,14 @@ def handle_telemetry(client, userdata, message):
     if 'temperature_sensor1' in payload:
         temperature_sensor1 = payload['temperature_sensor1']
         print('Message received from sensor 1:', temperature_sensor1)
-
+        
         if temperature_sensor1 < tmin1:
             tmin1 = temperature_sensor1
-        elif temperature_sensor1 > tmax1:
+            print(f'temperature_sensor1: {temperature_sensor1}, tmax1: {tmax1}')
+        if temperature_sensor1 > tmax1:
             tmax1 = temperature_sensor1
-        
+            print(f'temperature_sensor1: {temperature_sensor1}, tmax1: {tmax1}')
+
         command_sensor1 = {
             "sensorId": 1,
             "tmax": tmax1,
@@ -67,8 +69,9 @@ def handle_telemetry(client, userdata, message):
 
         if temperature_sensor2 < tmin2:
             tmin2 = temperature_sensor2
-        elif temperature_sensor2 > tmax2:
+        if temperature_sensor2 > tmax2:
             tmax2 = temperature_sensor2
+            
         command_sensor2 = { 
             "sensorId": 2,
             "tmax": tmax2,
