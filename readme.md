@@ -16,13 +16,13 @@ pip install counterfit_connection
 pip install counterfit_shims_seeed_python_dht
 ```
 
-# ativar o ambiente virtual no MAC ou Linux
+# Ativar o ambiente virtual no MAC ou Linux
 
 ```
 source .venv/bin/activate
 ``` 
 
-# ativar o ambiente virtual no MAC ou Linux
+# Ativar o ambiente virtual no MAC ou Linux
 
 ```
 .venv\scripts\activate
