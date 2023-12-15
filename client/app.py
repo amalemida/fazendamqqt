@@ -24,12 +24,12 @@ print('MQTT connected')
 sensor1 = DHT("11", 0)
 sensor2 = DHT("11", 2)
 sensor3 = DHT("11", 4)
-adc1 = ADC(7)
-adc2 = ADC(9)
-adc3 = ADC(11)
-relay1 = GroveRelay(6)
-relay2 = GroveRelay(8)
-relay3 = GroveRelay(10)
+adc1 = ADC(6)
+adc2 = ADC(8)
+adc3 = ADC(10)
+relay1 = GroveRelay(7)
+relay2 = GroveRelay(9)
+relay3 = GroveRelay(11)
 
 
 def handle_command(client, userdata, message):
