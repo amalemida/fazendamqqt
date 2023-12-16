@@ -24,11 +24,11 @@ print('MQTT connected')
 sensor1 = DHT("11", 0)
 sensor2 = DHT("11", 2)
 sensor3 = DHT("11", 4)
-adc1 = ADC(6)
-adc2 = ADC(8)
-adc3 = ADC(10)
-relay1 = GroveRelay(7)
-relay2 = GroveRelay(9)
+adc1 = ADC()
+adc2 = ADC()
+adc3 = ADC()
+relay1 = GroveRelay(9)
+relay2 = GroveRelay(10)
 relay3 = GroveRelay(11)
 
 
@@ -43,7 +43,7 @@ def handle_command(client, userdata, message):
     print('Message received for sensor 3:', payload_sensor3)
 
 while True:
-    soil_moisture1 = adc1.read(0)
+    soil_moisture1 = adc1.read(6)
     print("Soil moisture1:", soil_moisture1)
 
     if soil_moisture1 > 450:
@@ -56,7 +56,7 @@ while True:
         print("Soil Moisture 1 is ok, turning relay1 off.")
         relay1.off()
 
-    soil_moisture2 = adc2.read(0)
+    soil_moisture2 = adc2.read(7)
     print("Soil moisture2:", soil_moisture2)
 
     if soil_moisture2 > 450:
@@ -69,7 +69,7 @@ while True:
         print("Soil Moisture 2 is ok, turning relay2 off.")
         relay2.off()
 
-    soil_moisture3 = adc3.read(0)
+    soil_moisture3 = adc3.read(8)
     print("Soil moisture3:", soil_moisture3)
 
     if soil_moisture3 > 450:
@@ -97,4 +97,4 @@ while True:
     print(f'temperature_sensor3 {temperature_sensor3}°C')
     mqtt_client.publish(client_telemetry_topic_sensor2, telemetry_sensor2)
 
-    time.sleep(30)
+    time.sleep(5)

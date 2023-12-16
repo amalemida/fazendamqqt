@@ -21,7 +21,7 @@ tmin2 = float('inf')
 
 def handle_telemetry(client, userdata, message):
     global tmax1, tmedia1, tmin1, tmax2, tmin2, tmedia2, tmax3, tmedia3, tmin3 
-    global irrigar, tempo_medicao
+    global irrigar
 
     tempo_medicao = 30  # intervalo das medições
 
@@ -30,7 +30,7 @@ def handle_telemetry(client, userdata, message):
     current_datetime = datetime.now()
     current_time = datetime.now().time()
     start_time = datetime.strptime("08:00:00", "%H:%M:%S").time()
-    end_time = datetime.strptime("17:05:00", "%H:%M:%S").time()
+    end_time = datetime.strptime("23:59:00", "%H:%M:%S").time()
     payload = json.loads(message.payload.decode())
 
     # Enviar informações de temperatura sensor 1
@@ -161,9 +161,9 @@ def handle_telemetry(client, userdata, message):
             response_irrigar_sensor2 = requests.put(endpoint_irrigacao+'2', data=json.dumps(command_data_irrigar_sensor2), headers={'Content-Type': 'application/json'})
         
             if response_irrigar_sensor2.status_code == 201:
-                print("Command for sensor 2 successfully sent!")
+                print("Command for humidity 2 successfully sent!")
             else:
-                print("Error sending command for sensor 2:", response_irrigar_sensor2.status_code)
+                print("Error sending command for humidity 2:", response_irrigar_sensor2.status_code)
                 print("Response content:", response_irrigar_sensor2.content)
         else:
             print("Waiting for telemetry transmission window.")
@@ -207,7 +207,7 @@ def handle_telemetry(client, userdata, message):
     # Enviar informações de irrigação sensor 3
     if 'umidade_sensor3' in payload:
         umidade_sensor3 = payload['umidade_sensor3']
-        print('Message received from sensor 3:', umidade_sensor3)
+        print('Message received from humidity 3:', umidade_sensor3)
 
         if umidade_sensor3 > 450:
             irrigar = True
@@ -230,9 +230,9 @@ def handle_telemetry(client, userdata, message):
             response_irrigar_sensor3 = requests.put(endpoint_irrigacao+'3', data=json.dumps(command_data_irrigar_sensor3), headers={'Content-Type': 'application/json'})
         
             if response_irrigar_sensor3.status_code == 201:
-                print("Command for sensor 3 successfully sent!")
+                print("Command for humidity 3 successfully sent!")
             else:
-                print("Error sending command for sensor 3:", response_irrigar_sensor3.status_code)
+                print("Error sending command for humidity 3:", response_irrigar_sensor3.status_code)
                 print("Response content:", response_irrigar_sensor3.content)
         else:
             print("Waiting for telemetry transmission window.")
@@ -243,4 +243,4 @@ while True:
     mqtt_client.subscribe(client_telemetry_topic_sensor3)
     mqtt_client.on_message = handle_telemetry
 
-    time.sleep(5)
+    time.sleep(60)
